@@ -2,6 +2,8 @@
 
 A personal accountability bot that keeps me on track during the day and plans the next one.
 
+A personal accountability bot that keeps me on track during the day and plans the next one.
+
 It checks Google Calendar to see what I should be doing, notices when I open a distracting app on my phone, and calls me out on Telegram. If I keep ignoring it, it texts my phone a command that blocks the app.
 
 Each night it builds tomorrow's plan from my Todoist tasks, and I can chat with it on Telegram any time to check my schedule or sort my tasks.
@@ -24,31 +26,9 @@ Each night it builds tomorrow's plan from my Todoist tasks, and I can chat with 
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    subgraph In["What triggers it"]
-        SC["iPhone Shortcuts<br/>app opened or closed"]
-        CR["Cron<br/>scheduled check, nightly plan"]
-        TI["Telegram<br/>my messages"]
-    end
-
-    API["FastAPI server<br/>(Render)"]
-
-    subgraph Out["What it talks to"]
-        DB[("Supabase")]
-        GC["Google Calendar"]
-        TD["Todoist"]
-        AI["OpenAI"]
-        TO["Telegram"]
-        TW["Twilio SMS"]
-    end
-
-    SC --> API
-    CR --> API
-    TI --> API
-    API --> DB & GC & TD & AI & TO & TW
-    TW --> PH["iPhone Shortcut<br/>blocks the app"]
-```
+<p align="center">
+  <img src="docs/architecture.svg" alt="Architecture: triggers feed the FastAPI backend, which reads and writes data services and sends outputs" width="100%">
+</p>
 
 | Service | Used for |
 |---|---|

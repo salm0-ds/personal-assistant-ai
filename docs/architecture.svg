@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 460" width="960" height="460" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8b949e"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="460" rx="12" fill="#0d1117"/>
+
+  <!-- Data and services -->
+  <rect x="180" y="20" width="600" height="120" rx="10" fill="none" stroke="#30363d" stroke-dasharray="5 4"/>
+  <text x="480" y="45" text-anchor="middle" font-size="13" font-weight="600" fill="#8b949e">DATA AND SERVICES</text>
+  <g font-size="14" fill="#e6edf3" text-anchor="middle">
+    <rect x="196" y="65" width="130" height="50" rx="8" fill="#161b22" stroke="#30363d"/>
+    <text x="261" y="95">Supabase</text>
+    <rect x="342" y="65" width="130" height="50" rx="8" fill="#161b22" stroke="#30363d"/>
+    <text x="407" y="95">Google Calendar</text>
+    <rect x="488" y="65" width="130" height="50" rx="8" fill="#161b22" stroke="#30363d"/>
+    <text x="553" y="95">Todoist</text>
+    <rect x="634" y="65" width="130" height="50" rx="8" fill="#161b22" stroke="#30363d"/>
+    <text x="699" y="95">OpenAI</text>
+  </g>
+
+  <!-- Triggers -->
+  <rect x="20" y="170" width="250" height="270" rx="10" fill="none" stroke="#30363d" stroke-dasharray="5 4"/>
+  <text x="145" y="195" text-anchor="middle" font-size="13" font-weight="600" fill="#8b949e">TRIGGERS</text>
+  <g text-anchor="middle">
+    <rect x="40" y="212" width="210" height="56" rx="8" fill="#161b22" stroke="#30363d"/>
+    <text x="145" y="236" font-size="14" fill="#e6edf3">iPhone Shortcuts</text>
+    <text x="145" y="255" font-size="12" fill="#8b949e">app opened or closed</text>
+    <rect x="40" y="284" width="210" height="56" rx="8" fill="#161b22" stroke="#30363d"/>
+    <text x="145" y="308" font-size="14" fill="#e6edf3">Cron jobs</text>
+    <text x="145" y="327" font-size="12" fill="#8b949e">scheduled check, nightly plan</text>
+    <rect x="40" y="356" width="210" height="56" rx="8" fill="#161b22" stroke="#30363d"/>
+    <text x="145" y="380" font-size="14" fill="#e6edf3">Telegram</text>
+    <text x="145" y="399" font-size="12" fill="#8b949e">my messages</text>
+  </g>
+
+  <!-- Backend -->
+  <rect x="400" y="275" width="160" height="72" rx="8" fill="#0c2d6b" stroke="#2f81f7" stroke-width="1.5"/>
+  <text x="480" y="306" text-anchor="middle" font-size="15" font-weight="600" fill="#e6edf3">FastAPI backend</text>
+  <text x="480" y="326" text-anchor="middle" font-size="12" fill="#9ecbff">hosted on Render</text>
+
+  <!-- Outputs -->
+  <rect x="690" y="170" width="250" height="270" rx="10" fill="none" stroke="#30363d" stroke-dasharray="5 4"/>
+  <text x="815" y="195" text-anchor="middle" font-size="13" font-weight="600" fill="#8b949e">OUTPUTS</text>
+  <g text-anchor="middle">
+    <rect x="710" y="212" width="210" height="56" rx="8" fill="#161b22" stroke="#30363d"/>
+    <text x="815" y="236" font-size="14" fill="#e6edf3">Telegram</text>
+    <text x="815" y="255" font-size="12" fill="#8b949e">nudges, alerts, replies</text>
+    <rect x="710" y="290" width="210" height="46" rx="8" fill="#161b22" stroke="#30363d"/>
+    <text x="815" y="318" font-size="14" fill="#e6edf3">Twilio SMS</text>
+    <rect x="710" y="372" width="210" height="56" rx="8" fill="#161b22" stroke="#30363d"/>
+    <text x="815" y="396" font-size="14" fill="#e6edf3">iPhone Shortcut</text>
+    <text x="815" y="415" font-size="12" fill="#8b949e">blocks the app</text>
+  </g>
+
+  <!-- Arrows -->
+  <g stroke="#8b949e" stroke-width="1.5" fill="none" marker-end="url(#arrow)">
+    <line x1="250" y1="240" x2="400" y2="292"/>
+    <line x1="250" y1="312" x2="400" y2="311"/>
+    <line x1="250" y1="384" x2="400" y2="330"/>
+    <line x1="462" y1="275" x2="462" y2="140"/>
+    <line x1="498" y1="140" x2="498" y2="275"/>
+    <line x1="560" y1="295" x2="710" y2="240"/>
+    <line x1="560" y1="313" x2="710" y2="313"/>
+    <line x1="815" y1="336" x2="815" y2="372"/>
+  </g>
+  <g font-size="12" fill="#8b949e">
+    <text x="454" y="212" text-anchor="end">write</text>
+    <text x="506" y="212">read</text>
+  </g>
+</svg>

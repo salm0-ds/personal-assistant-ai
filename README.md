@@ -1,10 +1,10 @@
-# telegram-agent
+# telegram-persinal-assistant-ai
 
-A personal accountability bot. It knows what I'm supposed to be doing (Google Calendar), notices when I'm on apps I shouldn't be (iPhone Shortcuts), and messages me on Telegram about it. If I ignore it long enough, it texts my phone a command that triggers a Shortcut to block the app.
+A personal accountability bot. It knows what I'm supposed to be doing (Google Calendar), notices when I'm on other applications, and messages me on Telegram about it. If I ignore it long enough, it texts my phone a command that triggers a Shortcut to block the app.
 
 It also plans my next day at night from my Todoist tasks, and I can chat with it on Telegram to check my schedule or sort my tasks.
 
-Built for one user (me). It only replies to the Telegram chat ID set in the env.
+Built for one user (me) currently. It only replies to the Telegram chat ID set in the env.
 
 ## Features
 

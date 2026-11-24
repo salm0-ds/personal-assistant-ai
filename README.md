@@ -1,14 +1,10 @@
-# telegram-personal-agent
+# telegram-personal-assitant-agent
 
-A personal accountability bot that keeps me on track during the day and plans the next one.
+A personal assitant bot that keeps the user on track during the day and plans the next day also. It checks Google Calendar to see what should be done during the day, notices when apps are opened on phones, and calls it out on Telegram. If it keeps getting ignored, it can escalate and send commands that blocks the app.
 
-A personal accountability bot that keeps me on track during the day and plans the next one.
+Each night it builds tomorrow's plan from set tasks on the Todoist app, and can help any time to check the schedule or sort tasks out on Telegram.
 
-It checks Google Calendar to see what I should be doing, notices when I open a distracting app on my phone, and calls me out on Telegram. If I keep ignoring it, it texts my phone a command that blocks the app.
-
-Each night it builds tomorrow's plan from my Todoist tasks, and I can chat with it on Telegram any time to check my schedule or sort my tasks.
-
-> Built for a single user. The bot only replies to the Telegram chat ID set in the environment.
+> Built for a single user (me) currently. The bot only replies to the Telegram chat ID set in the environment.
 
 ## Features
 

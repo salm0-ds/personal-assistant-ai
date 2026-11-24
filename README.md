@@ -1,10 +1,12 @@
-# telegram-persinal-assistant-ai
+# telegram-personal-agent
 
-A personal accountability bot. It knows what I'm supposed to be doing (Google Calendar), notices when I'm on other applications, and messages me on Telegram about it. If I ignore it long enough, it texts my phone a command that triggers a Shortcut to block the app.
+A personal accountability bot that keeps me on track during the day and plans the next one.
 
-It also plans my next day at night from my Todoist tasks, and I can chat with it on Telegram to check my schedule or sort my tasks.
+It checks Google Calendar to see what I should be doing, notices when I open a distracting app on my phone, and calls me out on Telegram. If I keep ignoring it, it texts my phone a command that blocks the app.
 
-Built for one user (me) currently. It only replies to the Telegram chat ID set in the env.
+Each night it builds tomorrow's plan from my Todoist tasks, and I can chat with it on Telegram any time to check my schedule or sort my tasks.
+
+> Built for a single user. The bot only replies to the Telegram chat ID set in the environment.
 
 ## Features
 
@@ -22,18 +24,40 @@ Built for one user (me) currently. It only replies to the Telegram chat ID set i
 
 ## Architecture
 
+```mermaid
+flowchart LR
+    subgraph In["What triggers it"]
+        SC["iPhone Shortcuts<br/>app opened or closed"]
+        CR["Cron<br/>scheduled check, nightly plan"]
+        TI["Telegram<br/>my messages"]
+    end
+
+    API["FastAPI server<br/>(Render)"]
+
+    subgraph Out["What it talks to"]
+        DB[("Supabase")]
+        GC["Google Calendar"]
+        TD["Todoist"]
+        AI["OpenAI"]
+        TO["Telegram"]
+        TW["Twilio SMS"]
+    end
+
+    SC --> API
+    CR --> API
+    TI --> API
+    API --> DB & GC & TD & AI & TO & TW
+    TW --> PH["iPhone Shortcut<br/>blocks the app"]
 ```
-iPhone Shortcuts ──(app opened/closed)──▶ ┐
-Cron ──(scheduled check, nightly plan)──▶ │
-Telegram ──(webhook)────────────────────▶ │  FastAPI (Render)
-                                          │
-                                          ├──▶ Supabase       (app logs, schedule blocks, messages, actions)
-                                          ├──▶ Google Calendar (read events, insert planned blocks)
-                                          ├──▶ Todoist        (p1 tasks)
-                                          ├──▶ OpenAI         (chat agent + planner, gpt-5-mini)
-                                          ├──▶ Telegram       (messages to me)
-                                          └──▶ Twilio SMS ──▶ iPhone Shortcut (majorblock / open Notion)
-```
+
+| Service | Used for |
+|---|---|
+| Supabase | App activity logs, schedule blocks, messages, assistant actions |
+| Google Calendar | Reading today's events, adding planned blocks |
+| Todoist | Priority (p1) tasks for the planner and chat |
+| OpenAI | Chat agent and nightly planner (`gpt-5-mini`) |
+| Telegram | Nudges, alerts and chat replies |
+| Twilio | Command texts (`majorblock`, `open-notion-inspo`) that trigger iPhone Shortcuts |
 
 The server doesn't block apps itself. It sends an SMS with a keyword, and an iPhone automation that triggers on that message does the actual blocking.
 
@@ -118,40 +142,62 @@ backend/
 | `SYSTEM_PROMPT` | Prompt for the nudge generator (optional, currently unused) |
 | `RENDER` | Set automatically on Render. Stops it from trying a browser login on the server |
 
-## Quick start
+## Setup
 
-Needs Python 3.10+.
+This isn't a one-command install. The bot relies on accounts with Telegram, OpenAI, Supabase, Google, Todoist and Twilio, plus an iPhone for the Shortcuts. Once those exist, setup takes four steps.
+
+**1. Install and configure** (Python 3.10+)
 
 ```bash
 cd backend
-pip install -r requirements.txt
+pip install -r requirements.txt python-dotenv
 ```
 
-Set the env vars above. There's no dotenv loading in the code, so either export them in your shell or install `python-dotenv` and use `--env-file`:
+Put the [environment variables](#environment-variables) in `backend/.env`.
+
+**2. Create the database tables** in Supabase (see the table list below).
+
+**3. Connect Google Calendar**
+
+```bash
+python google_cal.py
+```
+
+This opens a browser to log in, saves `token.json` and prints today's events. When you deploy, paste the contents of `token.json` into `GOOGLE_TOKEN_JSON`.
+
+**4. Run it and connect Telegram**
 
 ```bash
 uvicorn main:app --reload --env-file .env
-```
-
-**Google Calendar**: the first time you run locally, it opens a browser to log in and saves `token.json` in `backend/`. To deploy, copy the contents of that file into `GOOGLE_TOKEN_JSON`. You can test it with `python google_cal.py`, which prints today's events.
-
-**Telegram webhook**: point your bot at the server:
-
-```bash
 curl "https://api.telegram.org/bot<TELEGRAM_TOKEN>/setWebhook?url=https://<your-server>/webhook"
 ```
 
-**Supabase**: the code expects these tables (no migrations in the repo, create them yourself):
-- `app_activity_logs`: `app_name`, `event_type`, `timestamp`
-- `schedule_blocks`: `id`, `google_event_id` (unique), `title`, `start_time`, `end_time`, `updated_at`
-- `messages`: `id`, `role`, `content`, `message_type`, `related_app`, `schedule_block_id`, `metadata`, `sent_at`
-- `assistant_actions`: `triggered_at`, `acted_at`, `trigger_type`, `trigger_name`, `trigger_data`, `action_taken`, `escalation_stage`, `reason`, `related_app`, `schedule_block_id`, `message_id`, `action_meta`
+Telegram needs a public URL, so deploy it (e.g. Render) or use a tunnel like ngrok when running locally.
 
-**Cron**: anything that can send a POST with a header works (cron-job.org, Render cron, etc). Hit `/trigger-scheduled-check` every few minutes and `/nightly-plan` once around 10pm.
+<details>
+<summary><b>Supabase tables</b></summary>
 
-**iPhone**: make Shortcuts automations that POST to the `-opened` / `-closed` endpoints when each app opens/closes, and automations that trigger on incoming SMS containing `majorblock` or `open-notion-inspo`.
+There are no migrations in the repo, so create these yourself:
+
+| Table | Columns |
+|---|---|
+| `app_activity_logs` | `app_name`, `event_type`, `timestamp` |
+| `schedule_blocks` | `id`, `google_event_id` (unique), `title`, `start_time`, `end_time`, `updated_at` |
+| `messages` | `id`, `role`, `content`, `message_type`, `related_app`, `schedule_block_id`, `metadata`, `sent_at` |
+| `assistant_actions` | `triggered_at`, `acted_at`, `trigger_type`, `trigger_name`, `trigger_data`, `action_taken`, `escalation_stage`, `reason`, `related_app`, `schedule_block_id`, `message_id`, `action_meta` |
+
+</details>
+
+<details>
+<summary><b>Cron and iPhone automations</b> (needed for tracking and planning)</summary>
+
+- **Cron**: anything that can send a POST with a header works (cron-job.org, Render cron). Call `/trigger-scheduled-check` every few minutes and `/nightly-plan` once around 10pm.
+- **iPhone**: add Shortcuts automations that POST to the `-opened` and `-closed` endpoints when each app opens and closes, plus automations that run when an SMS containing `majorblock` or `open-notion-inspo` arrives.
+
+</details>
 
 ## Notes
 
 - Times use the server's local time zone. On Render that's UTC, so the active-hours windows and "today" are in UTC.
 - The Notion page ID is hardcoded in `main.py`.
+

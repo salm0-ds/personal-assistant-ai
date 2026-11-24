@@ -25,29 +25,37 @@ Each night it builds tomorrow's plan from my Todoist tasks, and I can chat with 
 ## Architecture
 
 ```mermaid
-flowchart LR
-    subgraph In["What triggers it"]
-        SC["iPhone Shortcuts<br/>app opened or closed"]
-        CR["Cron<br/>scheduled check, nightly plan"]
-        TI["Telegram<br/>my messages"]
-    end
-
-    API["FastAPI server<br/>(Render)"]
-
-    subgraph Out["What it talks to"]
+flowchart TB
+    subgraph Data["Data and services (read and write)"]
+        direction TB
         DB[("Supabase")]
         GC["Google Calendar"]
         TD["Todoist"]
         AI["OpenAI"]
-        TO["Telegram"]
-        TW["Twilio SMS"]
     end
 
-    SC --> API
-    CR --> API
-    TI --> API
-    API --> DB & GC & TD & AI & TO & TW
-    TW --> PH["iPhone Shortcut<br/>blocks the app"]
+    subgraph Main["Request flow"]
+        direction LR
+        subgraph In["Triggers"]
+            direction LR
+            SC["iPhone Shortcuts<br/>app opened or closed"]
+            CR["Cron jobs<br/>scheduled check, nightly plan"]
+            TI["Telegram<br/>my messages"]
+        end
+
+        API["FastAPI backend<br/>(Render)"]
+
+        subgraph Out["Outputs"]
+            direction LR
+            TO["Telegram<br/>messages to me"]
+            TW["Twilio SMS"] --> PH["iPhone Shortcut<br/>blocks the app"]
+        end
+
+        In --> API
+        API --> Out
+    end
+
+    Data <--> Main
 ```
 
 | Service | Used for |
